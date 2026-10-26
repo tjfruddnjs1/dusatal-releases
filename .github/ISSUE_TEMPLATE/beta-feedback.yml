@@ -1,0 +1,33 @@
+name: 베타 피드백
+description: 플레이하면서 느낀 점, 막힌 곳, 버그를 알려 주세요.
+title: "[베타] "
+labels: ["beta"]
+body:
+  - type: dropdown
+    id: platform
+    attributes:
+      label: 어디서 플레이했나요?
+      options: ["웹 (PC 브라우저)", "웹 (모바일 브라우저)", "Windows 다운로드", "Mac 다운로드", "Android APK"]
+    validations: { required: true }
+  - type: dropdown
+    id: where
+    attributes:
+      label: 어디까지 진행했나요?
+      options: ["카페", "거리·로비", "4층 대기", "1차 면접", "쉬는 시간", "2차 면접", "투표·잠긴 문", "엔딩까지 봤어요"]
+    validations: { required: true }
+  - type: dropdown
+    id: kind
+    attributes:
+      label: 어떤 이야기인가요?
+      options: ["막혀서 진행이 안 됨", "버그·오류", "무엇을 해야 할지 모르겠음", "대사·이야기가 어색함", "재미있었던 점", "기타"]
+  - type: textarea
+    id: detail
+    attributes:
+      label: 자세히 알려 주세요
+      description: 무엇을 하려다 어떤 일이 생겼는지, 가능하면 스크린샷도 붙여 주세요.
+    validations: { required: true }
+  - type: input
+    id: time
+    attributes:
+      label: 플레이 시간 (대략)
+      placeholder: 예) 25분
