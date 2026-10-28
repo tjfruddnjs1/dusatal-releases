@@ -18,19 +18,31 @@
 <canvas id="c" tabindex="-1"></canvas>
 <div id="load"><div style="font-size:28px;font-weight:bold">두사탈</div><div>두더지 회사 탈출하기 · 1화 불러오는 중…</div><div id="bar"><div id="fill"></div></div></div>
 <div id="rot">휴대폰을 가로로 돌려 주세요.</div>
-<script src="Build/WebGL.loader.js?v=0.5.0"></script>
 <script>
-  createUnityInstance(document.querySelector('#c'), {
-    dataUrl: 'Build/WebGL.data.unityweb?v=0.5.0',
-    frameworkUrl: 'Build/WebGL.framework.js.unityweb?v=0.5.0',
-    codeUrl: 'Build/WebGL.wasm.unityweb?v=0.5.0',
-    streamingAssetsUrl: 'StreamingAssets',
-    companyName: 'Dusatal', productName: '두사탈', productVersion: '0.4.0',
-    autoSyncPersistentDataPath: true,
-    matchWebGLToCanvasSize: true,
-  }, p => { document.querySelector('#fill').style.width = (p * 100) + '%'; })
-  .then(() => { document.querySelector('#load').style.display = 'none'; })
-  .catch(e => { document.querySelector('#load').innerHTML = '불러오지 못했습니다: ' + e; });
+  var v = '0.6.0';
+  // Phones: ASTC textures if the GPU has no DXT, and at most 1.5 device pixels per CSS pixel (a 3x screen would
+  // otherwise render four times the pixels for no visible gain in this art).
+  var gl = document.createElement('canvas').getContext('webgl2');
+  var astc = /[?&]astc=1/.test(location.search) || (!!(gl && gl.getExtension('WEBGL_compressed_texture_astc')) && !(gl && gl.getExtension('WEBGL_compressed_texture_s3tc')));   // ?astc=1 forces the phone build (testing)
+  var mobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && /Mac/.test(navigator.platform));
+  var dir = astc ? 'Build-astc/' : 'Build/';
+  var s = document.createElement('script');
+  s.src = dir + 'WebGL.loader.js?v=' + v;
+  s.onload = function () {
+    createUnityInstance(document.querySelector('#c'), {
+      dataUrl: dir + 'WebGL.data.unityweb?v=' + v,
+      frameworkUrl: dir + 'WebGL.framework.js.unityweb?v=' + v,
+      codeUrl: dir + 'WebGL.wasm.unityweb?v=' + v,
+      streamingAssetsUrl: 'StreamingAssets',
+      companyName: 'Dusatal', productName: '두사탈', productVersion: v,
+      devicePixelRatio: Math.min(window.devicePixelRatio || 1, mobile ? 1.5 : 2),
+      autoSyncPersistentDataPath: true,
+      matchWebGLToCanvasSize: true,
+    }, function (p) { document.querySelector('#fill').style.width = (p * 100) + '%'; })
+    .then(function () { document.querySelector('#load').style.display = 'none'; })
+    .catch(function (e) { document.querySelector('#load').innerHTML = '불러오지 못했습니다: ' + e; });
+  };
+  document.body.appendChild(s);
 </script>
 </body>
 </html>
