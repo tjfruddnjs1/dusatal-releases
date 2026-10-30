@@ -4,6 +4,11 @@ name: release
 on:
   push:
     tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'tag, e.g. v0.7.6'
+        required: true
 permissions:
   contents: write
 jobs:
@@ -15,7 +20,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          TAG="${GITHUB_REF_NAME}"; VER="${TAG#v}"
+          TAG="${{ github.event.inputs.tag || github.ref_name }}"; VER="${TAG#v}"
           ZIP="dl/Dusatal-${VER}-win64.zip"
           test -f "$ZIP"
           gh release view "$TAG" >/dev/null 2>&1 && gh release delete "$TAG" --yes
