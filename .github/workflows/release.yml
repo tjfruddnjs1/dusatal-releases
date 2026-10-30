@@ -1,0 +1,22 @@
+# Makes the GitHub Release for a pushed tag vX.Y.Z from the zip committed under dl/ and the notes under notes/.
+# Used when the build machine cannot create releases itself; tools/publish.ps1 on Windows creates them directly.
+name: release
+on:
+  push:
+    tags: ['v*']
+permissions:
+  contents: write
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="${GITHUB_REF_NAME}"; VER="${TAG#v}"
+          ZIP="dl/Dusatal-${VER}-win64.zip"
+          test -f "$ZIP"
+          gh release view "$TAG" >/dev/null 2>&1 && gh release delete "$TAG" --yes
+          gh release create "$TAG" "$ZIP" --title "두사탈 1화 ${TAG} (Windows 테스트 빌드)" --notes-file "notes/${TAG}.md"
