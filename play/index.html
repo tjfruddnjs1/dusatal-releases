@@ -15,15 +15,40 @@
   #rot svg { width: 72px; height: 72px; animation: turn 1.6s ease-in-out infinite; }
   @keyframes turn { 0%, 30% { transform: rotate(0); } 60%, 100% { transform: rotate(-90deg); } }
   #go { border: 0; border-radius: 12px; background: #F2C94C; color: #17130F; font-size: 18px; font-weight: bold; padding: 14px 26px; }
+  #fs { display: none; position: fixed; right: 10px; bottom: 10px; z-index: 5; border: 0; border-radius: 10px; background: rgba(23,19,15,.75); color: #F3EADB; font-size: 14px; padding: 8px 12px; }
   @media (orientation: portrait) and (max-width: 900px) { #rot { display: flex; } }
 </style>
 </head>
 <body>
 <canvas id="c" tabindex="-1"></canvas>
 <div id="load"><img src="logo.png" alt="두사탈" style="width:min(520px,80vw)"><div>두더지 회사 탈출하기 · 1화 불러오는 중…</div><div id="bar"><div id="fill"></div></div></div>
+<button id="fs">전체 화면</button>
 <div id="rot"><svg viewBox="0 0 24 24" fill="none" stroke="#F3EADB" stroke-width="1.6"><rect x="7" y="2" width="10" height="20" rx="2"/><line x1="11" y1="18.5" x2="13" y2="18.5"/></svg><button id="go">가로 화면으로 하기</button><div id="rothint">휴대폰을 가로로 돌려도 됩니다.</div></div>
 <script>
   var v = '0.8.24';
+  // In-app browsers (KakaoTalk, LINE) can't go full screen: open the page in the phone's own browser.
+  (function () {
+    var ua = navigator.userAgent;
+    if (/KAKAOTALK/i.test(ua)) { location.href = 'kakaotalk://web/openExternal?url=' + encodeURIComponent(location.href); return; }
+    if (/ Line\//.test(ua) && !/openExternalBrowser=1/.test(location.search)) { location.href = location.href + (location.search ? '&' : '?') + 'openExternalBrowser=1'; }
+  })();
+  // Phone in landscape: the first tap on the game goes full screen (the address bar and the bottom bar take a third
+  // of the height otherwise); after leaving full screen a small button brings it back.
+  (function () {
+    var phone = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && /Mac/.test(navigator.platform));
+    var de = document.documentElement, fs = document.getElementById('fs');
+    if (!phone || !de.requestFullscreen) return;
+    function full() {
+      de.requestFullscreen({ navigationUI: 'hide' }).then(function () { if (screen.orientation && screen.orientation.lock) return screen.orientation.lock('landscape'); }).catch(function () {});
+    }
+    function show() { fs.style.display = document.fullscreenElement || window.innerHeight > window.innerWidth ? 'none' : 'block'; }
+    fs.onclick = full;
+    document.getElementById('c').addEventListener('pointerup', function first() {
+      if (!document.fullscreenElement && window.innerWidth > window.innerHeight) full();
+      this.removeEventListener('pointerup', first);
+    });
+    document.addEventListener('fullscreenchange', show); window.addEventListener('resize', show); show();
+  })();
   // Portrait phone: one tap goes full screen and locks landscape (Android), so a phone with rotation lock on still
   // plays. Where the browser can't lock (iPhone Safari), say how to turn it instead.
   (function () {
