@@ -5,6 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <title>두사탈 1화 · 베타</title>
 <link rel="icon" type="image/png" href="favicon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="theme-color" content="#17130F">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="두사탈">
 <style>
   html, body { margin: 0; height: 100%; background: #000; overflow: hidden; font-family: sans-serif; }
   #c { width: 100vw; height: 100vh; display: block; background: #000; }
@@ -15,6 +22,7 @@
   #rot svg { width: 72px; height: 72px; animation: turn 1.6s ease-in-out infinite; }
   @keyframes turn { 0%, 30% { transform: rotate(0); } 60%, 100% { transform: rotate(-90deg); } }
   #go { border: 0; border-radius: 12px; background: #F2C94C; color: #17130F; font-size: 18px; font-weight: bold; padding: 14px 26px; }
+  #inst { display: none; position: fixed; right: 10px; bottom: 52px; z-index: 5; border: 0; border-radius: 10px; background: #F2C94C; color: #17130F; font-size: 14px; font-weight: bold; padding: 8px 12px; }
   #fs { display: none; position: fixed; right: 10px; bottom: 10px; z-index: 5; border: 0; border-radius: 10px; background: rgba(23,19,15,.75); color: #F3EADB; font-size: 14px; padding: 8px 12px; }
   @media (orientation: portrait) and (max-width: 900px) { #rot { display: flex; } }
 </style>
@@ -23,9 +31,18 @@
 <canvas id="c" tabindex="-1"></canvas>
 <div id="load"><img src="logo.png" alt="두사탈" style="width:min(520px,80vw)"><div>두더지 회사 탈출하기 · 1화 불러오는 중…</div><div id="bar"><div id="fill"></div></div></div>
 <button id="fs">전체 화면</button>
+<button id="inst">앱으로 설치</button>
 <div id="rot"><svg viewBox="0 0 24 24" fill="none" stroke="#F3EADB" stroke-width="1.6"><rect x="7" y="2" width="10" height="20" rx="2"/><line x1="11" y1="18.5" x2="13" y2="18.5"/></svg><button id="go">가로 화면으로 하기</button><div id="rothint">휴대폰을 가로로 돌려도 됩니다.</div></div>
 <script>
-  var v = '0.8.25';
+  var v = '0.8.26';
+  // Installable: Chrome hands over an install prompt; the button shows only then (and not once installed).
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function () {});
+  (function () {
+    var deferred = null, inst = document.getElementById('inst');
+    window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); deferred = e; inst.style.display = 'block'; });
+    inst.onclick = function () { if (!deferred) return; deferred.prompt(); deferred.userChoice.finally(function () { deferred = null; inst.style.display = 'none'; }); };
+    window.addEventListener('appinstalled', function () { inst.style.display = 'none'; });
+  })();
   // In-app browsers (KakaoTalk, LINE) can't go full screen: open the page in the phone's own browser.
   (function () {
     var ua = navigator.userAgent;

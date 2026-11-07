@@ -1,0 +1,14 @@
+{
+  "name": "두사탈: 두더지 회사 탈출하기",
+  "short_name": "두사탈",
+  "start_url": "./",
+  "scope": "./",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#17130F",
+  "theme_color": "#17130F",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
