@@ -34,7 +34,7 @@
 <button id="inst">앱으로 설치</button>
 <div id="rot"><svg viewBox="0 0 24 24" fill="none" stroke="#F3EADB" stroke-width="1.6"><rect x="7" y="2" width="10" height="20" rx="2"/><line x1="11" y1="18.5" x2="13" y2="18.5"/></svg><button id="go">가로 화면으로 하기</button><div id="rothint">휴대폰을 가로로 돌려도 됩니다.</div></div>
 <script>
-  var v = '0.8.31';
+  var v = '0.8.32';
   // Installable: Chrome hands over an install prompt; the button shows only then (and not once installed).
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function () {});
   (function () {
@@ -93,7 +93,7 @@
       codeUrl: dir + 'WebGL.wasm.unityweb?v=' + v,
       streamingAssetsUrl: 'StreamingAssets',
       companyName: 'Dusatal', productName: '두사탈', productVersion: v,
-      devicePixelRatio: Math.min(window.devicePixelRatio || 1, mobile ? 1.5 : 2),
+      devicePixelRatio: Math.min(window.devicePixelRatio || 1, 2),   // 1.5 on phones blurred text on 3x screens; the 3D stage still drops quality on its own when slow
       autoSyncPersistentDataPath: false,   // the game syncs saves itself, in batches (WebStorage.jslib)
       matchWebGLToCanvasSize: true,
     }, function (p) { document.querySelector('#fill').style.width = (p * 100) + '%'; })
